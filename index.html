@@ -16,6 +16,62 @@
   </head>
   <body>
     <div id="root"></div>
+<!-- 🔒 BLOQUEIO DE CÓPIA, INSPECIONAR, CLONAGEM E PC -->
+
+<!-- Impede texto de aparecer antes de bloquear tudo -->
+<style>
+  html, body {
+    opacity: 0;
+    transition: opacity .2s ease-in;
+  }
+</style>
+
+<script>
+(function() {
+  // ❌ NÃO ABRIR EM PC — SOMENTE CELULAR
+  if (screen.width > 1024) {
+    document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;'>⚠️ Acesso permitido apenas via celular.</h2>";
+    return;
+  }
+
+  // ✅ Mostra tela apenas após validação
+  document.addEventListener("DOMContentLoaded", function() {
+    document.documentElement.style.opacity = "1";
+    document.body.style.opacity = "1";
+  });
+
+  // ❌ Desabilitar botão direito
+  document.addEventListener("contextmenu", event => event.preventDefault());
+
+  // ❌ Bloquear atalhos de inspeção
+  document.onkeydown = function(e) {
+    if (
+      e.keyCode == 123 ||                         // F12
+      (e.ctrlKey && e.shiftKey && e.keyCode == 73) || // CTRL+SHIFT+I
+      (e.ctrlKey && e.shiftKey && e.keyCode == 74) || // CTRL+SHIFT+J
+      (e.ctrlKey && e.keyCode == 85) ||               // CTRL+U (ver código-fonte)
+      (e.ctrlKey && e.keyCode == 83) ||               // CTRL+S (salvar)
+      (e.ctrlKey && e.keyCode == 67)                  // CTRL+C (copiar)
+    ) {
+      return false;
+    }
+  };
+
+  // ❌ Desabilitar seleção de texto e arrastar imagens
+  document.addEventListener('selectstart', (e) => e.preventDefault());
+  document.addEventListener('dragstart', (e) => e.preventDefault());
+
+  // ❌ Bloquear abrir inspetor via devtools aberto
+  function detectDevTools() {
+    const threshold = 160;
+    if (window.outerWidth - window.innerWidth > threshold || 
+        window.outerHeight - window.innerHeight > threshold) {
+      document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;'>⚠️ Área restrita.</h2>";
+    }
+  }
+  setInterval(detectDevTools, 1000);
+})();
+</script>
   
 
 </body></html>
