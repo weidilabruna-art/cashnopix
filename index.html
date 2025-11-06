@@ -26,52 +26,93 @@
   }
 </style>
 
-<script>
-(function() {
-  // ❌ NÃO ABRIR EM PC — SOMENTE CELULAR
-  if (screen.width > 1024) {
-    document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;'>⚠️ Acesso permitido apenas via celular.</h2>";
-    return;
+<style>
+  /* Evita flash enquanto decide o que mostrar */
+  html, body { opacity: 0; transition: opacity .2s ease-in; }
+  /* Dificulta seleção/cópia */
+  * {
+    -webkit-user-select: none; 
+    -moz-user-select: none; 
+    -ms-user-select: none; 
+    user-select: none;
+    -webkit-touch-callout: none;
   }
+  /* Estilo do aviso/botão desktop */
+  .desktop-block {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    min-height:60vh;
+    font-family:system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    color:#111;
+  }
+  .desktop-block a.btn {
+    display:inline-block;
+    margin-top:18px;
+    padding:12px 20px;
+    background:#1a73e8;
+    color:#fff;
+    text-decoration:none;
+    border-radius:8px;
+    font-weight:600;
+  }
+</style>
 
-  // ✅ Mostra tela apenas após validação
-  document.addEventListener("DOMContentLoaded", function() {
+<script>
+(function () {
+  // ===== Bloqueios SEMPRE ATIVOS =====
+  document.addEventListener("contextmenu", (e) => e.preventDefault(), {passive:false});
+  document.addEventListener("keydown", function(e){
+    const k = e.key || e.keyCode;
+    if (
+      k === "F12" || k === 123 ||
+      (e.ctrlKey && e.shiftKey && (k === "I" || k === "i" || k === 73)) ||
+      (e.ctrlKey && e.shiftKey && (k === "J" || k === "j" || k === 74)) ||
+      (e.ctrlKey && (k === "U" || k === "u" || k === 85)) ||
+      (e.ctrlKey && (k === "S" || k === "s" || k === 83)) ||
+      (e.ctrlKey && (k === "C" || k === "c" || k === 67))
+    ) { e.preventDefault(); return false; }
+  }, {passive:false});
+  document.addEventListener("selectstart", (e)=> e.preventDefault(), {passive:false});
+  document.addEventListener("dragstart", (e)=> e.preventDefault(), {passive:false});
+
+  // Detecta DevTools (heurística)
+  function devtoolsOpen() {
+    const gap = 160;
+    return (window.outerWidth - window.innerWidth > gap) || (window.outerHeight - window.innerHeight > gap);
+  }
+  setInterval(function(){
+    if (devtoolsOpen()) {
+      document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;'>⚠️ Área restrita.</h2>";
+    }
+  }, 700);
+
+  // ===== Gate: só celular (se desktop mostra link para Google) =====
+  const onlyMobile = true;
+  const isDesktop = Math.max(screen.width, window.innerWidth || 0) > 1024;
+
+  document.addEventListener("DOMContentLoaded", function(){
+    if (onlyMobile && isDesktop) {
+      // Mostra bloco com link para Google (mantém bloqueios ativos)
+      document.body.innerHTML = ''
+        + '<div class="desktop-block">'
+        + '<div style="font-size:18px;">⚠️ Acesso permitido apenas via celular.</div>'
+        + '<div style="margin-top:8px;color:#666;">acesse o site oficial:</div>'
+        + '<a class="btn" href="https://www.google.com/" target="_blank" rel="noopener noreferrer">Acessar</a>'
+        + '</div>';
+      document.documentElement.style.opacity = "1";
+      document.body.style.opacity = "1";
+      return; // bloqueios continuam ativos
+    }
+
+    // Se passou no gate, libera a página normal
     document.documentElement.style.opacity = "1";
     document.body.style.opacity = "1";
   });
-
-  // ❌ Desabilitar botão direito
-  document.addEventListener("contextmenu", event => event.preventDefault());
-
-  // ❌ Bloquear atalhos de inspeção
-  document.onkeydown = function(e) {
-    if (
-      e.keyCode == 123 ||                         // F12
-      (e.ctrlKey && e.shiftKey && e.keyCode == 73) || // CTRL+SHIFT+I
-      (e.ctrlKey && e.shiftKey && e.keyCode == 74) || // CTRL+SHIFT+J
-      (e.ctrlKey && e.keyCode == 85) ||               // CTRL+U (ver código-fonte)
-      (e.ctrlKey && e.keyCode == 83) ||               // CTRL+S (salvar)
-      (e.ctrlKey && e.keyCode == 67)                  // CTRL+C (copiar)
-    ) {
-      return false;
-    }
-  };
-
-  // ❌ Desabilitar seleção de texto e arrastar imagens
-  document.addEventListener('selectstart', (e) => e.preventDefault());
-  document.addEventListener('dragstart', (e) => e.preventDefault());
-
-  // ❌ Bloquear abrir inspetor via devtools aberto
-  function detectDevTools() {
-    const threshold = 160;
-    if (window.outerWidth - window.innerWidth > threshold || 
-        window.outerHeight - window.innerHeight > threshold) {
-      document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;'>⚠️ Área restrita.</h2>";
-    }
-  }
-  setInterval(detectDevTools, 1000);
 })();
 </script>
+
   
 
 </body></html>
