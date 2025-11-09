@@ -59,59 +59,6 @@
   }
 </style>
 
-<script>
-(function () {
-  // ===== Bloqueios SEMPRE ATIVOS =====
-  document.addEventListener("contextmenu", (e) => e.preventDefault(), {passive:false});
-  document.addEventListener("keydown", function(e){
-    const k = e.key || e.keyCode;
-    if (
-      k === "F12" || k === 123 ||
-      (e.ctrlKey && e.shiftKey && (k === "I" || k === "i" || k === 73)) ||
-      (e.ctrlKey && e.shiftKey && (k === "J" || k === "j" || k === 74)) ||
-      (e.ctrlKey && (k === "U" || k === "u" || k === 85)) ||
-      (e.ctrlKey && (k === "S" || k === "s" || k === 83)) ||
-      (e.ctrlKey && (k === "C" || k === "c" || k === 67))
-    ) { e.preventDefault(); return false; }
-  }, {passive:false});
-  document.addEventListener("selectstart", (e)=> e.preventDefault(), {passive:false});
-  document.addEventListener("dragstart", (e)=> e.preventDefault(), {passive:false});
-
-  // Detecta DevTools (heurística)
-  function devtoolsOpen() {
-    const gap = 160;
-    return (window.outerWidth - window.innerWidth > gap) || (window.outerHeight - window.innerHeight > gap);
-  }
-  setInterval(function(){
-    if (devtoolsOpen()) {
-      document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;'>⚠️ Área restrita.</h2>";
-    }
-  }, 700);
-
-  // ===== Gate: só celular (se desktop mostra link para Google) =====
-  const onlyMobile = true;
-  const isDesktop = Math.max(screen.width, window.innerWidth || 0) > 1024;
-
-  document.addEventListener("DOMContentLoaded", function(){
-    if (onlyMobile && isDesktop) {
-      // Mostra bloco com link para Google (mantém bloqueios ativos)
-      document.body.innerHTML = ''
-        + '<div class="desktop-block">'
-        + '<div style="font-size:18px;">⚠️</div>'
-        + '<div style="margin-top:8px;color:#666;">acesse o site oficial:</div>'
-        + '<a class="btn" href="https://www.google.com/" target="_blank" rel="noopener noreferrer">Acessar</a>'
-        + '</div>';
-      document.documentElement.style.opacity = "1";
-      document.body.style.opacity = "1";
-      return; // bloqueios continuam ativos
-    }
-
-    // Se passou no gate, libera a página normal
-    document.documentElement.style.opacity = "1";
-    document.body.style.opacity = "1";
-  });
-})();
-</script>
 
   <!-- Meta Pixel Code -->
 <script>
